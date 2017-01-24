@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+                           
+    <!-- 注解扫描 -->
+    <context:component-scan base-package="com.wn"/>
+    <!-- 启动jackson -->
+    <mvc:annotation-driven />
+    <!-- 引入属性文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    
+    <!-- 引入数据源 -->
+    <bean id="xxxDataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+    
+    <!-- 引入mybatis -->
+    <bean id="xxxSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="xxxDataSource" />
+        <property name="mapperLocations">
+			<list>
+				<value>classpath*:mapper/*Mapper.xml</value>
+			</list>
+		</property>
+    </bean>
+    <bean id="xxxMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.wn.mapper" />
+        <property name="sqlSessionFactoryBeanName" value="xxxSqlSessionFactory" />
+    </bean>
+</beans>
